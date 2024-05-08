@@ -1,23 +1,6 @@
-(lt a : 5)
-(lt b : 4)
+(lt a = 4)
 
 (
-    if true =>
-        (cast 5) 
-    else =>
-        (cast 4)
+    if (== 4.0 4) =>
+        (cast 1)
 )
-
-(spell printNum {num} =>
-    (cast num)
-) 
-
-(printNum 1)
-
-// comment
-
-/~
-
-another comment
-
-~/

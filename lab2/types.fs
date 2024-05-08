@@ -10,6 +10,8 @@ type Token =
     | SEMICOLON
     | LEFT_CURLY
     | RIGHT_CURLY
+    | LEFT_BRACKET
+    | RIGHT_BRACKET
     | LEFT_PARENTHESIS
     | RIGHT_PARENTHESIS
 
@@ -30,5 +32,10 @@ type Expr =
     | SIMPLE of string
     | SIMPLEOP of string
     | SIMPLELIST of Expr list
+    | FOR_LOOP of string * Expr * Expr * Expr
+    | WHILE of Expr * Expr
+    | HEAL
+    | KILL
     | SIMPLEARGLIST of Expr list
+    
 and env = Map<string, Expr>

@@ -2,7 +2,7 @@ module Interpreter
 #nowarn "25"
 open System
 open Types
-
+exception ControlFlow of string
 
 let evaluate env expr = 
     let lookup name env = env |> Map.find name
@@ -20,6 +20,8 @@ let evaluate env expr =
     let binary_operators = Map [
         (">", (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.BOOL(x > y)));
         ("<", (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.BOOL(x < y)));
+        (">=", (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.BOOL(x >= y)));
+        ("<=", (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.BOOL(x <= y)));
     ]
 
     let rec eval_args_bool eval_fn env acc = fun x ->
@@ -78,7 +80,7 @@ let evaluate env expr =
             | 1 -> single_lambda (List.head evaluated_list), new_env
             | _ -> List.reduce (fun x y -> multiple_lambda (x, y)) evaluated_list, new_env
 
-        | Expr.OPERATOR("=", t) ->
+        | Expr.OPERATOR("==", t) ->
             match List.length t with
             | 2 ->
                 let first::second::[] = t
@@ -108,6 +110,44 @@ let evaluate env expr =
             | Expr.NUMBER(n) -> if Convert.ToBoolean n then (expr1, new_env) else (expr2, new_env)
             | Expr.BOOL(b) -> if b then (expr1, new_env) else (expr2, new_env)
             | waste -> failwith ("eval_impl ERROR: unevaluatable cond expression: " + (sprintf "%A" waste))
+
+        | Expr.FOR_LOOP(var, start, endValue, body) ->
+            let start_val, start_env = eval_impl env start
+            let end_val, end_env = eval_impl start_env endValue
+            let rec loop current_env current_val end_val =
+                if current_val >= end_val then
+                    Expr.SIMPLE(""), current_env
+                else
+                    try
+                        let _, body_env = eval_impl (Map.add var (Expr.NUMBER(current_val)) current_env) body
+                        loop body_env (current_val + 1.) end_val
+                    with
+                    | ControlFlow "Break" -> Expr.SIMPLE(""), current_env  // Остановить выполнение цикла
+                    | ControlFlow "Continue" -> loop current_env (current_val + 1.) end_val  // Пропустить оставшееся тело и продолжить со следующей итерации
+            match (start_val, end_val) with
+            | (Expr.NUMBER(start_num), Expr.NUMBER(end_num)) ->
+                loop env start_num end_num
+            | _ -> failwith "FOR_LOOP ERROR: Start and end values must be numbers"
+
+
+        | Expr.WHILE(cond, body) ->
+            let rec loop current_env =
+                try
+                    let cond_val, new_env = eval_impl current_env cond
+                    match cond_val with
+                    | Expr.BOOL(true) ->
+                        let _, body_env = eval_impl new_env body
+                        loop body_env
+                    | Expr.BOOL(false) -> Expr.SIMPLE(""), current_env
+                    | _ -> failwith "WHILE condition must be a boolean"
+                with
+                | ControlFlow "Continue" -> loop current_env  // Продолжить с текущим состоянием окружения
+                | ControlFlow "Break" -> Expr.SIMPLE(""), current_env  // Завершить цикл
+            loop env
+
+        | Expr.HEAL -> raise (ControlFlow "Continue")
+        | Expr.KILL -> raise (ControlFlow "Break")
+
         | Expr.SIMPLELIST(list) -> 
             let rec eval_lists env = function
                 | h::t -> 

@@ -14,6 +14,9 @@ let tokenize source =
         ('}', Token.RIGHT_CURLY);
         ('(', Token.LEFT_PARENTHESIS);
         (')', Token.RIGHT_PARENTHESIS);
+        ('[', Token.LEFT_BRACKET);
+        (']', Token.RIGHT_BRACKET);
+        (':', Token.OPERATOR(":"));
     ]
 
     let arithmetic_tokens = Map [
@@ -47,21 +50,26 @@ let tokenize source =
     let rec read_id acc = function
     | h::t when Char.IsWhiteSpace(h) -> (toString (List.rev acc)), t
     | h::t when Char.IsLetter(h) || Char.IsDigit(h) || h = '_' -> read_id (h::acc) t
-    | h::t when h = '(' || h = ')' || h = '{' || h = '}' -> (toString (List.rev acc)), (h::t)
+    | h::t when h = '(' || h = ')' || h = '{' || h = '}' || h = '[' || h = ']' -> (toString (List.rev acc)), (h::t)
     | [] -> (toString (List.rev acc)), []
     | h::_ -> failwith ("read_id ERROR: Unexpected symbol met: " + (string h))
+
 
     let rec read_number acc = function
     | h::t when Char.IsWhiteSpace(h) -> (toString (List.rev acc)), t
     | h::t when Char.IsDigit(h) -> read_number (h::acc) t
     | '.'::t -> read_number ('.'::acc) t
-    | h::t when h = '(' || h = ')' -> (toString (List.rev acc)), (h::t)
+    | h::t when h = '(' || h = ')' || h = '[' || h = ']' -> (toString (List.rev acc)), (h::t)
     | [] -> (toString (List.rev acc)), []
     | h::_ -> failwith ("read_number ERROR: Unexpected symbol met while reading digit: " + (string h))
 
+
     let rec tokenize_impl acc = function
     | '='::'>'::t -> tokenize_impl (Token.OPERATOR("=>")::acc) t
-    | ':'::t -> tokenize_impl (Token.OPERATOR(":")::acc) t
+    | '.'::'.'::t -> tokenize_impl (Token.OPERATOR("..")::acc) t
+    | '>'::'='::t -> tokenize_impl (Token.OPERATOR(">=")::acc) t
+    | '<'::'='::t -> tokenize_impl (Token.OPERATOR("<=")::acc) t
+    | '='::'='::t -> tokenize_impl (Token.OPERATOR("==")::acc) t
     | h::t when Char.IsWhiteSpace(h) -> tokenize_impl acc t
     | h::t when literal_tokens |> Map.containsKey h -> 
         let token = literal_tokens |> Map.find h
@@ -75,23 +83,27 @@ let tokenize source =
     | '/'::'/'::t -> 
         let remaining_source = read_linecomment t
         tokenize_impl acc remaining_source
-    | h::'='::t when Char.IsLetter(h) -> 
-        let read_id, remaining_source = read_id [] (h::t)
-        tokenize_impl (Token.ID(read_id)::Token.OPERATOR("=")::acc) remaining_source
-    | h1::h2::t when Char.IsDigit(h1) && (arithmetic_tokens |> Map.tryFind h2).IsSome ->
-        let read_number, remaining_source = read_number [] (h1::h2::t)
-        tokenize_impl (Token.NUMBER(System.Double.Parse(read_number))::acc) remaining_source
     | h::t when Char.IsLetter(h) ->
         let read_id, remaining_source = read_id [] (h::t)
         tokenize_impl (Token.ID(read_id)::acc) remaining_source
-    | h::t when Char.IsDigit(h) ||
-                (h = '-' && t |> List.head |> Char.IsDigit) ->
+    | h::t when Char.IsDigit(h) ->
         let read_number, remaining_source = read_number [] (h::t)
-        let parsed_number = System.Double.Parse(read_number, System.Globalization.CultureInfo.InvariantCulture)
-        tokenize_impl (Token.NUMBER(parsed_number)::acc) remaining_source
+        try 
+            let parsed_number = System.Double.Parse(read_number, System.Globalization.CultureInfo.InvariantCulture)
+            tokenize_impl (Token.NUMBER(parsed_number)::acc) remaining_source
+        with
+            _ -> failwith ("tokenize_impl ERROR: Unrecognizable number met: " + read_number)
+    | '-'::h::t when Char.IsDigit(h) ->
+        let read_number, remaining_source = read_number [] (h::t)
+        try 
+            let parsed_number = System.Double.Parse("-" + read_number, System.Globalization.CultureInfo.InvariantCulture)
+            tokenize_impl (Token.NUMBER(parsed_number)::acc) remaining_source
+        with
+            _ -> failwith ("tokenize_impl ERROR: Unrecognizable number met: " + read_number)
+    | h::' '::t when (arithmetic_tokens |> Map.tryFind h).IsSome ->
+         tokenize_impl ((arithmetic_tokens |> Map.find h)::acc) t
     | [] -> List.rev acc, []
     | _ -> failwith "tokenize_impl ERROR: Unsupported symbol met or wrong structure"
-
 
     tokenize_impl [] source
     
