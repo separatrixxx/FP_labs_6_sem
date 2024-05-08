@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Sj2xL6oTX6M4QBZti8KIdgI1TTgbSVlL81NDTbzWoKIbSuCiPczWFxo4k438gg33BTY7t03TVVvj/4X/+iG4zg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\nikit\\OneDrive\\Рабочий стол\\FP_labs_6_sem\\lab2\\frieren.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\nikit\\.nuget\\packages\\fsharp.core\\7.0.200\\fsharp.core.7.0.200.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,23 @@
+(lt a : 5)
+(lt b : 4)
+
+(
+    if true =>
+        (cast 5) 
+    else =>
+        (cast 4)
+)
+
+(spell printNum {num} =>
+    (cast num)
+) 
+
+(printNum 1)
+
+// comment
+
+/~
+
+another comment
+
+~/
