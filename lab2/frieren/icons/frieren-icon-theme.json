@@ -1,0 +1,8 @@
+{
+    "iconDefinitions": {
+        "_frieren": { "iconPath": "./icons/frieren.svg" }
+    },
+    "fileExtensions": {
+        "frn": "_frieren",
+    },
+}

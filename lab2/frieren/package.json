@@ -1,0 +1,36 @@
+{
+  "name": "frieren",
+  "displayName": "Frieren",
+  "description": "Frieren Lang Extension",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "frieren",
+      "aliases": ["Frieren", "frieren"],
+      "extensions": [".frn"],
+      "configuration": "./language-configuration.json",
+      "icon": {
+        "light": "./images/logo.png",
+        "dark": "./images/logo.png"
+      }
+    }],
+    "iconThemes": [
+      {
+          "id": "frieren-icon-theme",
+          "label": "Frieren Icon Theme",
+          "path": "./icons/frieren-icon-theme.json"
+      }
+    ],
+    "grammars": [{
+      "language": "frieren",
+      "scopeName": "source.frieren",
+      "path": "./syntaxes/frieren.tmLanguage.json"
+    }]
+  }
+}
