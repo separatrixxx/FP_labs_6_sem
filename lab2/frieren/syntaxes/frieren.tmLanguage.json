@@ -32,7 +32,7 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.declaration.frieren",
-					"match": "\\b(cast|readGrim|writeGrim)\\b"
+					"match": "\\b(cast|readGrim|writeGrim|flowerField)\\b"
 				}
 			]
 		},
@@ -53,13 +53,7 @@
 		"strings": {
 			"name": "string.quoted.double.frieren",
 			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.frieren",
-					"match": "\\\\."
-				}
-			]
+			"end": "\""
 		},
 		"booleans": {
 			"patterns": [{
@@ -80,22 +74,13 @@
 			}]
 		},
 		"comments": {
-			"patterns": [
-				{
-					"name": "comment.line.double-slash.frieren",
-					"match": "\/\/.*$"
-				},
-				{
-					"name": "comment.block.frieren",
-					"begin": "/~",
-					"end": "~/",
-					"patterns": [{
-						"match": ".+?",
-						"name": "comment.block.content.frieren"
-					}]
-				}
-			]
+			"patterns": [{
+				"name": "comment.block.frieren",
+				"begin": "~",
+				"end": "~"
+			}]
 		}
+		
 	},
 	"scopeName": "source.frieren"
 }

@@ -8,7 +8,7 @@ let parse tokens =
         | Token.RIGHT_CURLY::t -> List.rev acc, t
         | _ -> failwith "parse_function_parameters ERROR: not found expected id"
 
-    let keywords = ["lt"; "mut"; "spell"; "scr"; "cast"; "if"; "else"; "for"; "while"; "readGrim"; "writeGrim"]
+    let keywords = ["lt"; "mut"; "spell"; "scr"; "cast"; "if"; "else"; "for"; "while"; "readGrim"; "writeGrim"; "flowerField"]
 
     let rec token_parser acc = function
         | [] -> List.rev acc, []
@@ -94,7 +94,12 @@ let parse tokens =
                 Expr.SIMPLE("=>")::(Expr.SIMPLELIST(_) as body)::[] ->
                     token_parser (Expr.SIMPLELIST([Expr.WHILE(cond, body)])::acc) remaining_part
 
-            | Expr.SIMPLE("cast")::(Expr.SIMPLELIST(_) as body)::[] -> token_parser (Expr.SIMPLELIST([Expr.PRINT(body)])::acc) remaining_part
+            | Expr.SIMPLE("cast")::(Expr.SIMPLELIST(_) as body)::[] ->
+                token_parser (Expr.SIMPLELIST([Expr.PRINT(body)])::acc) remaining_part
+
+            | Expr.SIMPLE("flowerField")::[] ->
+                token_parser (Expr.SIMPLELIST([Expr.SIMPLE("flowerField")])::acc) remaining_part
+
 
             | (Expr.NUMBER(_) as num_expr)::[] -> token_parser (SIMPLELIST([num_expr])::acc) remaining_part
             | (Expr.STRING(_) as str_expr)::[] -> token_parser (SIMPLELIST([str_expr])::acc) remaining_part

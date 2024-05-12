@@ -1,8 +1,13 @@
 module Interpreter
 #nowarn "25"
 open System
+open System.Text
 open Types
 exception ControlFlow of string
+
+
+let setupConsoleEncoding () =
+        Console.OutputEncoding <- Encoding.UTF8
 
 let evaluate env expr = 
     let lookup name env = env |> Map.find name
@@ -64,6 +69,10 @@ let evaluate env expr =
         | Expr.SIMPLELIST([Expr.ID(id)]) -> lookup id env, env
 
         | Expr.SIMPLELIST([Expr.OPERATOR(_) as op]) -> eval_impl env op
+
+        | Expr.SIMPLE("flowerField") ->
+            printfn "🪻🌻🪻🌹🪻🌻🪻🌷🪻🌹🪻🌻🪻🌷"
+            Expr.SIMPLE(""), env
 
         | Expr.OPERATOR(op, t) when (Map.tryFind op numeric_operators).IsSome ->
             let (single_lambda, multiple_lambda) = Map.find op numeric_operators
@@ -227,6 +236,8 @@ let evaluate env expr =
 
         | Expr.SIMPLE(_) -> failwith ("eval_impl ERROR: simple value is invaluatable\n")
         | waste -> failwith ("eval_impl ERROR: wrong structure to evaluate" + (sprintf "%A\n" waste))
+
+    setupConsoleEncoding ()
 
     match expr with
     | h -> eval_impl env h

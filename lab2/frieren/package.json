@@ -6,31 +6,51 @@
   "engines": {
     "vscode": "^1.89.0"
   },
+  "scripts": {
+    "build": "tsc -p ./"
+  },
   "categories": [
     "Programming Languages"
   ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:frieren"
+  ],
   "contributes": {
-    "languages": [{
-      "id": "frieren",
-      "aliases": ["Frieren", "frieren"],
-      "extensions": [".frn"],
-      "configuration": "./language-configuration.json",
-      "icon": {
-        "light": "./images/logo.png",
-        "dark": "./images/logo.png"
-      }
-    }],
-    "iconThemes": [
+    "languages": [
       {
-          "id": "frieren-icon-theme",
-          "label": "Frieren Icon Theme",
-          "path": "./icons/frieren-icon-theme.json"
+        "id": "frieren",
+        "aliases": [
+          "Frieren",
+          "frieren"
+        ],
+        "extensions": [
+          ".frn"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/logo.png",
+          "dark": "./images/logo.png"
+        }
       }
     ],
-    "grammars": [{
-      "language": "frieren",
-      "scopeName": "source.frieren",
-      "path": "./syntaxes/frieren.tmLanguage.json"
-    }]
+    "hoverProvider": true,
+    "iconThemes": [
+      {
+        "id": "frieren-icon-theme",
+        "label": "Frieren Icon Theme",
+        "path": "./icons/frieren-icon-theme.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "frieren",
+        "scopeName": "source.frieren",
+        "path": "./syntaxes/frieren.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "vscode": "^1.1.37"
   }
 }

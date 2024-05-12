@@ -38,7 +38,7 @@ let tokenize source =
     | [] -> failwith "read_string_end ERROR: EOF before closing \" found"
 
     let rec read_comment = function
-    | '~'::'/'::t -> t
+    | '~'::t -> t
     | _::t -> read_comment t
     | [] -> failwith "read_comment ERROR: EOF before closing comment"
 
@@ -77,7 +77,7 @@ let tokenize source =
     | '"'::t | '\\'::'"'::t -> 
         let read_string, remaining_source = read_string_end [] t
         tokenize_impl (Token.STRING(read_string)::acc) remaining_source
-    | '/'::'~'::t -> 
+    | '~'::t -> 
         let remaining_source = read_comment t
         tokenize_impl acc remaining_source
     | '/'::'/'::t -> 
