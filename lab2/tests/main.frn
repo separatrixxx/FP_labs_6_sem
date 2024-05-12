@@ -85,13 +85,12 @@
 
 (printNum 100)
 
-~ Работа с файлами ~
-
-(cast (readGrim "./tests/input.txt") )
-
-(writeGrim "./tests/output.txt" "Wow!")
-
 ~ Создать поле цветов ~
 
 (flowerField)
 
+~ Работа с файлами ~
+
+(cast (readGrim "./tests/input.txt"))
+
+(writeGrim "./tests/output.txt" "Wow!")
