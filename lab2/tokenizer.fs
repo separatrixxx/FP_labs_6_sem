@@ -70,6 +70,7 @@ let tokenize source =
     | '>'::'='::t -> tokenize_impl (Token.OPERATOR(">=")::acc) t
     | '<'::'='::t -> tokenize_impl (Token.OPERATOR("<=")::acc) t
     | '='::'='::t -> tokenize_impl (Token.OPERATOR("==")::acc) t
+    | '!'::'='::t -> tokenize_impl (Token.OPERATOR("!=")::acc) t
     | h::t when Char.IsWhiteSpace(h) -> tokenize_impl acc t
     | h::t when literal_tokens |> Map.containsKey h -> 
         let token = literal_tokens |> Map.find h

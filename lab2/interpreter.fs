@@ -102,6 +102,19 @@ let evaluate env expr =
                     | _ -> failwith ("eval_impl ERROR: given unsupported arguments: " + (sprintf "%A %A" eval_first eval_second))
                 ) (eval_first, eval_second), new_env'
             | _ -> failwith ("eval_impl ERROR: operator " + (sprintf "%s" "=") + " can't have not 2 arguments")
+        | Expr.OPERATOR("!=", t) ->
+            match List.length t with
+            | 2 ->
+                let first::second::[] = t
+                let eval_first, new_env = eval_impl env first
+                let eval_second, new_env' = eval_impl new_env second
+                (function 
+                    | (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.BOOL(x <> y)
+                    | (Expr.BOOL(x), Expr.BOOL(y)) -> Expr.BOOL(x <> y)
+                    | (Expr.STRING(x), Expr.STRING(y)) -> Expr.BOOL(x <> y)
+                    | _ -> failwith ("eval_impl ERROR: given unsupported arguments: " + (sprintf "%A %A" eval_first eval_second))
+                ) (eval_first, eval_second), new_env'
+            | _ -> failwith ("eval_impl ERROR: operator " + (sprintf "%s" "=") + " can't have not 2 arguments")
         | Expr.OPERATOR(op, t) when (Map.tryFind op binary_operators).IsSome ->
             let evaluated_list, new_env = eval_args_num eval_impl env [] t
             let functor = Map.find op binary_operators

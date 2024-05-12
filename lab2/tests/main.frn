@@ -60,6 +60,11 @@
         (cast "false")
 )
 
+(
+    if (!= true false) =>
+        (cast "true")
+)
+
 ~ Циклы ~
 
 (
