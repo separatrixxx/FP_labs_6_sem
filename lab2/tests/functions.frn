@@ -1,0 +1,41 @@
+~ Реализация факториала ~
+
+(
+    spell factRec {n1} =>
+    (
+        if (== n1 0) =>
+            1
+        else =>
+            (* n1 (factRec (- n1 1)))
+    )
+)
+
+(cast (factRec 5))
+
+~ Проверка числа на чётность ~
+
+(
+    spell isEven {n2} =>
+    (
+        if (== (% n2 2) 0) =>
+            true
+        else =>
+            false
+    )
+)
+
+(cast (isEven 152))
+
+~ Сумма чисел с помощью рекурсии ~
+
+(
+    spell sumRec {n3} =>
+    (
+        if (== n3 1) =>
+            1
+        else =>
+            (+ n3 (sumRec (- n3 1)))
+    )
+)
+
+(cast (sumRec 10))
