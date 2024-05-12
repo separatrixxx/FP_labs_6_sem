@@ -17,6 +17,7 @@ let evaluate env expr =
         ("-", ((function Expr.NUMBER(x) -> Expr.NUMBER(-x)), (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.NUMBER(x - y))));
         ("*", ((function x -> x), (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.NUMBER(x * y))));
         ("/", ((function Expr.NUMBER(x) -> Expr.NUMBER(1. / x)), (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.NUMBER(x / y))));
+        ("%", ((function Expr.NUMBER(x) -> Expr.NUMBER(1. % x)), (function (Expr.NUMBER(x), Expr.NUMBER(y)) -> Expr.NUMBER(x % y))));
     ]
     let bool_operators = Map [
         ("&", ((function x -> x), (function (Expr.BOOL(x), Expr.BOOL(y)) -> Expr.BOOL(x && y))));

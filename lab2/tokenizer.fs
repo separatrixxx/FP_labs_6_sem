@@ -24,6 +24,7 @@ let tokenize source =
         ('-', Token.OPERATOR("-"));
         ('*', Token.OPERATOR("*"));
         ('/', Token.OPERATOR("/"));
+        ('%', Token.OPERATOR("%"));
         ('=', Token.OPERATOR("="));
         ('>', Token.OPERATOR(">"));
         ('<', Token.OPERATOR("<"));
